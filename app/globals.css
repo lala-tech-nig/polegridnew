@@ -1,5 +1,26 @@
 @import "tailwindcss";
 
+:root {
+  --brand-green: #2ecc71;
+  --brand-black: #0a0a0a;
+  --brand-white: #ffffff;
+}
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--brand-white);
+  color: var(--brand-black);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+button {
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background: linear-gradient(var(--brand-white), var(--brand-white)) padding-box,
+              linear-gradient(90deg, var(--brand-green), #00ff88, var(--brand-green)) border-box;
+  transition: all 0.4s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
 }
