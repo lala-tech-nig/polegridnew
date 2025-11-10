@@ -9,7 +9,7 @@ export default function ServiceCard({ image, title, desc, onKnowMore }) {
         <p className="text-gray-700 mb-3">{desc}</p>
         <button
           onClick={onKnowMore}
-          className="px-4 py-2 border-2 border-green-500 text-green-600 rounded-full hover:bg-green-500 hover:text-white transition"
+          className="px-4 py-2 border-2 text-green-600 rounded-full hover:bg-green-500 hover:text-white transition"
         >
           Know More
         </button>
