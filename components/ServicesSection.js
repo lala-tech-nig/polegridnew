@@ -7,37 +7,37 @@ import Confetti from "react-confetti";
 
 const services = [
   {
-    image: "/images/hero1.jpg",
+    image: "/hero1.jpg",
     title: "Telecom Infrastructure",
     desc: "Building strong and reliable connectivity systems nationwide.",
     full: "We specialize in providing world-class telecom tower management, maintenance, and deployment services to ensure continuous network availability.",
   },
   {
-    image: "/images/hero2.jpg",
+    image: "/hero2.jpg",
     title: "Network Maintenance",
     desc: "24/7 technical monitoring and maintenance.",
     full: "Our experts maintain and monitor all network systems, reducing downtime and improving customer satisfaction.",
   },
   {
-    image: "/images/hero3.jpg",
+    image: "/hero3.jpg",
     title: "Solar Power Solutions",
     desc: "Green energy solutions for telecom towers.",
     full: "We integrate renewable solar energy solutions to reduce carbon footprints and enhance sustainability in telecom operations.",
   },
   {
-    image: "/images/hero4.jpg",
+    image: "/hero4.jpg",
     title: "Fiber Optics Installation",
     desc: "High-speed fiber connectivity.",
     full: "PoleGrid provides high-speed fiber network infrastructure for businesses and organizations to ensure seamless data transmission.",
   },
   {
-    image: "/images/hero5.jpg",
+    image: "/hero5.jpg",
     title: "Smart Surveillance",
     desc: "AI-powered site monitoring.",
     full: "We deploy smart surveillance and IoT devices to ensure real-time monitoring of telecom infrastructure and remote locations.",
   },
   {
-    image: "/images/hero1.jpg",
+    image: "/hero1.jpg",
     title: "Technical Training",
     desc: "Empowering Nigerian engineers.",
     full: "Our training programs equip professionals with cutting-edge skills in telecom technology, fiber systems, and renewable power.",

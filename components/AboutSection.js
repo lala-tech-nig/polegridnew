@@ -15,7 +15,7 @@ export default function AboutSection() {
     <section id="about" className="py-16 bg-white">
       <div className="container mx-auto px-8 grid md:grid-cols-2 gap-8 items-center">
         <div className="overflow-hidden rounded-2xl">
-          <img src="/images/hero3.jpg" alt="About PoleGrid" className="w-full h-full object-cover" />
+          <img src="/hero3.jpg" alt="About PoleGrid" className="w-full h-full object-cover" />
         </div>
         <div className="about-content">
           <h2 className="text-3xl font-bold text-green-600 mb-4">About Us</h2>
