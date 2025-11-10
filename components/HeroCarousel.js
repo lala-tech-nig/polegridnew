@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { gsap } from "gsap";
 
 const slides = [
-  { image: "/images/hero1.jpg", caption: "Empowering Telecom Growth Nationwide" },
-  { image: "/images/hero2.jpg", caption: "Building Reliable Connectivity for Everyone" },
-  { image: "/images/hero3.jpg", caption: "Join the Future of Telecom Service" },
-  { image: "/images/hero4.jpg", caption: "Innovating for a Connected Nigeria" },
-  { image: "/images/hero5.jpg", caption: "Partner with Us and Start Earning" },
+  { image: "/hero1.jpg", caption: "Empowering Telecom Growth Nationwide" },
+  { image: "/hero2.jpg", caption: "Building Reliable Connectivity for Everyone" },
+  { image: "/hero3.jpg", caption: "Join the Future of Telecom Service" },
+  { image: "/hero4.jpg", caption: "Innovating for a Connected Nigeria" },
+  { image: "/hero5.jpg", caption: "Partner with Us and Start Earning" },
 ];
 
 export default function HeroCarousel() {
