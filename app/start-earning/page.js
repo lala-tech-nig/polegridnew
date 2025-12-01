@@ -41,20 +41,21 @@ export default function StartEarning() {
   const handleOrgSubmit = () => router.push("/payment");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 flex flex-col items-center justify-center p-6 md:p-10">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 md:p-10">
       <motion.h1
-        initial={{ y: -50, opacity: 0 }}
+        initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7 }}
-        className="text-4xl md:text-5xl font-bold mb-4 text-center text-green-800"
+        transition={{ duration: 0.6 }}
+        className="text-4xl md:text-5xl font-bold mb-4 text-center text-gray-900"
       >
         Start Earning With PoleGrid
       </motion.h1>
+
       <motion.p
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, delay: 0.3 }}
-        className="text-gray-600 text-center max-w-xl mb-6 text-lg md:text-xl"
+        transition={{ duration: 0.6, delay: 0.3 }}
+        className="text-gray-600 text-center max-w-xl mb-8 text-lg md:text-xl"
       >
         Become a verified landlord or partner organization and start earning.
       </motion.p>
@@ -63,7 +64,7 @@ export default function StartEarning() {
         onClick={() => setOpen(true)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="px-8 py-4 bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
+        className="px-8 py-4 bg-gray-900 text-white rounded-xl font-semibold shadow-lg hover:bg-gray-800 transition-all"
       >
         Start Earning Now
       </motion.button>
@@ -75,18 +76,19 @@ export default function StartEarning() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4"
+            className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-4"
           >
             <motion.div
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg md:max-w-xl overflow-y-auto max-h-[90vh]"
+              transition={{ duration: 0.4 }}
+              className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-lg md:max-w-xl overflow-y-auto max-h-[90vh]"
             >
+              {/* Registration Type Selection */}
               {type === "none" && (
                 <div className="flex flex-col gap-4">
-                  <h2 className="text-2xl font-bold mb-3 text-center text-green-700">
+                  <h2 className="text-2xl font-bold text-center text-gray-900 mb-4">
                     Choose Registration Type
                   </h2>
 
@@ -113,6 +115,7 @@ export default function StartEarning() {
                 </div>
               )}
 
+              {/* Landlord Form */}
               {type === "landlord" && (
                 <div className="flex flex-col gap-4">
                   <h2 className="text-xl font-bold text-green-700 mb-2">
@@ -123,51 +126,38 @@ export default function StartEarning() {
                   </p>
 
                   <div className="grid grid-cols-1 gap-3">
-                    {Object.keys(landlordForm).map((key) => {
-                      if (key === "idPhoto" || key === "documents") {
-                        return (
-                          <input
-                            key={key}
-                            type="file"
-                            onChange={(e) =>
-                              setLandlordForm({
-                                ...landlordForm,
-                                [key]: e.target.files[0] || null,
-                              })
-                            }
-                            className="border p-3 rounded-lg focus:ring-2 focus:ring-green-400 transition-all"
-                          />
-                        );
-                      }
-                      return (
-                        <input
-                          key={key}
-                          type="text"
-                          value={landlordForm[key]}
-                          onChange={(e) =>
-                            setLandlordForm({
-                              ...landlordForm,
-                              [key]: e.target.value,
-                            })
-                          }
-                          className="border p-3 rounded-lg focus:ring-2 focus:ring-green-400 transition-all"
-                          placeholder={key.replace(/([A-Z])/g, " $1")}
-                        />
-                      );
-                    })}
+                    {Object.keys(landlordForm).map((key) => (
+                      <input
+                        key={key}
+                        type={key === "idPhoto" || key === "documents" ? "file" : "text"}
+                        value={key === "idPhoto" || key === "documents" ? undefined : landlordForm[key]}
+                        onChange={(e) =>
+                          setLandlordForm({
+                            ...landlordForm,
+                            [key]:
+                              key === "idPhoto" || key === "documents"
+                                ? e.target.files[0] || null
+                                : e.target.value,
+                          })
+                        }
+                        className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none transition-all"
+                        placeholder={key.replace(/([A-Z])/g, " $1")}
+                      />
+                    ))}
                   </div>
 
                   <motion.button
                     onClick={handleLandlordSubmit}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="mt-4 w-full bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white p-3 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all"
+                    className="mt-4 w-full bg-green-600 text-white p-3 rounded-lg font-semibold shadow-md hover:bg-green-700 transition-all"
                   >
                     Submit Registration
                   </motion.button>
                 </div>
               )}
 
+              {/* Organization Form */}
               {type === "organization" && (
                 <div className="flex flex-col gap-4">
                   <h2 className="text-xl font-bold text-purple-700 mb-2">
@@ -186,7 +176,7 @@ export default function StartEarning() {
                             [key]: e.target.value,
                           })
                         }
-                        className="border p-3 rounded-lg focus:ring-2 focus:ring-purple-400 transition-all"
+                        className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none transition-all"
                         placeholder={key.replace(/([A-Z])/g, " $1")}
                       />
                     ))}
@@ -196,7 +186,7 @@ export default function StartEarning() {
                     onClick={handleOrgSubmit}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="mt-4 w-full bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 text-white p-3 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all"
+                    className="mt-4 w-full bg-purple-600 text-white p-3 rounded-lg font-semibold shadow-md hover:bg-purple-700 transition-all"
                   >
                     Submit
                   </motion.button>
