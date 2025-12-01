@@ -25,7 +25,7 @@ export default function Navbar() {
   return (
     <nav className="flex justify-between items-center px-6 md:px-12 py-3 shadow-md sticky top-0 bg-white/90 backdrop-blur z-50">
       {/* Logo */}
-      <img src="polegridlogo1.png" alt="PoleGrid" className="w-20 md:w-24" />
+      <img src="polegrid.png" alt="PoleGrid" className="w-20 md:w-24" />
 
       {/* Desktop Links */}
       <ul className="hidden md:flex gap-6 items-center">
