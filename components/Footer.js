@@ -35,9 +35,15 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Logo Section */}
+        {/* Logo Section with white background */}
         <div className="flex-1 flex justify-center md:justify-end">
-          <img src="/polegrid.png" alt="PoleGrid Logo" className="w-32 md:w-40 hover:scale-105 transition-transform duration-300" />
+          <div className="bg-white p-2 rounded-xl shadow-lg hover:scale-105 transition-transform duration-300">
+            <img
+              src="/polegrid.png"
+              alt="PoleGrid Logo"
+              className="w-32 md:w-40"
+            />
+          </div>
         </div>
       </div>
 
