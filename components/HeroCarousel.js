@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { gsap } from "gsap";
+import { useRouter } from "next/navigation"; // ✅ Import router
 
 const slides = [
   { image: "/hero1.jpg", caption: "Empowering Telecom Growth Nationwide" },
@@ -12,6 +13,7 @@ const slides = [
 
 export default function HeroCarousel() {
   const [index, setIndex] = useState(0);
+  const router = useRouter(); // ✅ Initialize router
 
   useEffect(() => {
     const tl = gsap.timeline({ repeat: -1, repeatDelay: 5 });
@@ -29,7 +31,7 @@ export default function HeroCarousel() {
       {slides.map((slide, i) => (
         <div
           key={i}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
+          className={`absolute inset-0 transition-opacity duration-1000 hero-slide ${
             i === index ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -37,8 +39,8 @@ export default function HeroCarousel() {
           <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-center text-white text-center">
             <h2 className="text-3xl md:text-5xl mb-6">{slide.caption}</h2>
             <button
-              className="px-6 py-3 bg-transparent border-2 border-green-400 hover:bg-green-500 hover:text-white"
-              onClick={() => alert("Modal opens here")}
+              onClick={() => router.push("/start-earning")} // ✅ Works now
+              className="px-6 py-3 bg-blue-600 text-white rounded-xl"
             >
               Start Earning Now
             </button>

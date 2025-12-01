@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import AboutSection from "@/components/AboutSection";
 import AnnouncementTicker from "@/components/AnnouncementTicker";
 import ContactForm from "@/components/ContactForm";
 import FAQ from "@/components/FAQ";
@@ -10,6 +9,7 @@ import Loader from "@/components/Loader";
 import Navbar from "@/components/Navbar";
 import ServicesSection from "@/components/ServicesSection";
 import Testimonials from "@/components/Testimonials";
+import AboutSection from "../components/AboutSection";
 
 
 export default function Home() {
