@@ -45,7 +45,7 @@ export default function Testimonials() {
   return (
     <section id="testimonials" className="py-20 bg-gray-50 overflow-hidden">
       <h2 className="text-3xl md:text-4xl font-bold text-center text-green-600 mb-12">
-        What Our Clients Say
+        What Our Partners Say
       </h2>
 
       {/* ROW 1 */}
