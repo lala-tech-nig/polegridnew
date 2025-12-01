@@ -9,7 +9,7 @@ import Loader from "@/components/Loader";
 import Navbar from "@/components/Navbar";
 import ServicesSection from "@/components/ServicesSection";
 import Testimonials from "@/components/Testimonials";
-import AboutSection from "../components/AboutSection";
+import AboutSection from "@/components/AboutSection";
 
 
 export default function Home() {
