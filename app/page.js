@@ -26,15 +26,15 @@ export default function Home() {
         <Loader />
       ) : (
         <>
-          <AnnouncementTicker />
-          <Navbar />
+          {/* <AnnouncementTicker /> */}
+          {/* <Navbar /> */}
           <HeroCarousel />
           <ServicesSection />
           <AboutSection />
           <Testimonials />
           <FAQ />
           <ContactForm />
-          <Footer />
+          {/* <Footer /> */}
         </>
       )}
     </main>
