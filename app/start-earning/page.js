@@ -1,201 +1,160 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import Confetti from "react-confetti";
 
-export default function StartEarning() {
-  const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const [type, setType] = useState("none");
+export default function ServicePage() {
+  const [selectedOption, setSelectedOption] = useState(null); // "landlord" | "organization"
+  const [modalOpen, setModalOpen] = useState(false);
+  const [form, setForm] = useState({});
+  const [confetti, setConfetti] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
-  const [landlordForm, setLandlordForm] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    propertyAddress: "",
-    state: "",
-    lga: "",
-    busStop: "",
-    serviceType: "",
-    tower: "",
-    sex: "",
-    idPhoto: null,
-    documents: null,
-  });
+  useEffect(() => {
+    setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  const [orgForm, setOrgForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    contactName: "",
-    contactEmail: "",
-    contactPhone: "",
-    orgType: "",
-    designation: "",
-    registrationProcess: "",
-  });
+  const handleOptionClick = (option) => {
+    setSelectedOption(option);
+    setModalOpen(true);
+  };
 
-  const handleLandlordSubmit = () => router.push("/payment");
-  const handleOrgSubmit = () => router.push("/payment");
+  const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
+    if (files) {
+      setForm({ ...form, [name]: files[0] });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setConfetti(true);
+    setTimeout(() => {
+      setConfetti(false);
+      setModalOpen(false);
+      const paymentUrl = `https://checkout.flutterwave.com/v3/hosted/pay?tx_ref=${Date.now()}&amount=5000&currency=NGN&redirect_url=${encodeURIComponent(
+        window.location.href
+      )}&customer[email]=${form.email || form.emailAddress || ""}`;
+      window.location.href = paymentUrl;
+    }, 3000);
+  };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 md:p-10">
-      <motion.h1
-        initial={{ y: -30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="text-4xl md:text-5xl font-bold mb-4 text-center text-gray-900"
-      >
-        Start Earning With PoleGrid
-      </motion.h1>
+    <section className="min-h-screen bg-gray-50 flex flex-col items-center px-6 py-16">
+      {/* Introduction */}
+      <div className="max-w-5xl text-center space-y-4">
+        <h1 className="text-4xl font-bold text-green-600">Welcome to PoleGrid Services</h1>
+        <p className="text-gray-700 text-lg">
+          PoleGrid offers innovative solutions for both landlords and organizations, ensuring secure, transparent, and efficient management.
+        </p>
+        <p className="text-gray-600">
+          Choose whether you are a Landlord or an Organization to get started with our specialized services.
+        </p>
+      </div>
 
-      <motion.p
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        className="text-gray-600 text-center max-w-xl mb-8 text-lg md:text-xl"
-      >
-        Become a verified landlord or partner organization and start earning.
-      </motion.p>
+      {/* Option Buttons */}
+      <div className="flex flex-col sm:flex-row gap-6 mt-10">
+        <button
+          onClick={() => handleOptionClick("landlord")}
+          className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-500"
+        >
+          Landlord
+        </button>
+        <button
+          onClick={() => handleOptionClick("organization")}
+          className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-500"
+        >
+          Organization
+        </button>
+      </div>
 
-      <motion.button
-        onClick={() => setOpen(true)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="px-8 py-4 bg-gray-900 text-white rounded-xl font-semibold shadow-lg hover:bg-gray-800 transition-all"
-      >
-        Start Earning Now
-      </motion.button>
-
-      {/* Modal */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-4"
-          >
-            <motion.div
-              initial={{ y: -50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -50, opacity: 0 }}
-              transition={{ duration: 0.4 }}
-              className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-lg md:max-w-xl overflow-y-auto max-h-[90vh]"
+      {/* Modal Form */}
+      {modalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start sm:items-center justify-center z-50 overflow-auto p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-10 w-full max-w-3xl shadow-xl relative">
+            <button
+              onClick={() => setModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 font-bold text-xl"
             >
-              {/* Registration Type Selection */}
-              {type === "none" && (
-                <div className="flex flex-col gap-4">
-                  <h2 className="text-2xl font-bold text-center text-gray-900 mb-4">
-                    Choose Registration Type
-                  </h2>
+              ✕
+            </button>
 
-                  <button
-                    onClick={() => setType("landlord")}
-                    className="w-full py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all"
-                  >
-                    Landlord
-                  </button>
+            <h2 className="text-2xl font-bold text-center mb-6 text-green-600">
+              {selectedOption === "landlord" ? "Landlord Details" : "Organization Details"}
+            </h2>
 
-                  <button
-                    onClick={() => setType("organization")}
-                    className="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all"
-                  >
-                    Organization
-                  </button>
-
-                  <button
-                    onClick={() => setOpen(false)}
-                    className="mt-2 w-full py-2 text-sm text-gray-500 underline"
-                  >
-                    Close
-                  </button>
-                </div>
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[80vh] overflow-auto">
+              {selectedOption === "landlord" && (
+                <>
+                  <input name="fullName" placeholder="Full Name" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <input type="email" name="email" placeholder="Email" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <input type="tel" name="phoneNumber" placeholder="Phone Number" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <input name="state" placeholder="State" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <input name="propertyAddress" placeholder="Property Address" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <input name="localGovernment" placeholder="Local Government" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <select name="sex" required onChange={handleInputChange} className="border rounded-lg p-2 w-full">
+                    <option value="">Select Sex</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                  <select name="serviceType" required onChange={handleInputChange} className="border rounded-lg p-2 w-full">
+                    <option value="">Service Type</option>
+                    <option value="Tower">Tower</option>
+                    <option value="ATMinstallation">ATM Installation</option>
+                  </select>
+                  <input type="file" name="idPhoto" required onChange={handleInputChange} className="w-full" />
+                  <input type="file" name="supportingDocs" required onChange={handleInputChange} className="w-full" />
+                </>
               )}
 
-              {/* Landlord Form */}
-              {type === "landlord" && (
-                <div className="flex flex-col gap-4">
-                  <h2 className="text-xl font-bold text-green-700 mb-2">
-                    Landlord Registration
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    Fill your details correctly to get verified.
-                  </p>
-
-                  <div className="grid grid-cols-1 gap-3">
-                    {Object.keys(landlordForm).map((key) => (
-                      <input
-                        key={key}
-                        type={key === "idPhoto" || key === "documents" ? "file" : "text"}
-                        value={key === "idPhoto" || key === "documents" ? undefined : landlordForm[key]}
-                        onChange={(e) =>
-                          setLandlordForm({
-                            ...landlordForm,
-                            [key]:
-                              key === "idPhoto" || key === "documents"
-                                ? e.target.files[0] || null
-                                : e.target.value,
-                          })
-                        }
-                        className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none transition-all"
-                        placeholder={key.replace(/([A-Z])/g, " $1")}
-                      />
-                    ))}
-                  </div>
-
-                  <motion.button
-                    onClick={handleLandlordSubmit}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="mt-4 w-full bg-green-600 text-white p-3 rounded-lg font-semibold shadow-md hover:bg-green-700 transition-all"
-                  >
-                    Submit Registration
-                  </motion.button>
-                </div>
+              {selectedOption === "organization" && (
+                <>
+                  <input name="organizationName" placeholder="Organization Name" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <input type="email" name="emailAddress" placeholder="Email Address" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <input type="tel" name="phoneNumber" placeholder="Phone Number" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <input name="address" placeholder="Address" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <input name="contactPersonName" placeholder="Contact Person Name" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <input type="email" name="contactPersonEmail" placeholder="Contact Person Email" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <input type="tel" name="contactPersonPhone" placeholder="Contact Person Phone" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <select name="organizationType" required onChange={handleInputChange} className="border rounded-lg p-2 w-full">
+                    <option value="">Organization Type</option>
+                    <option value="Telecom Company">Telecom Company</option>
+                    <option value="Towerco">Towerco</option>
+                    <option value="Real Estate">Real Estate</option>
+                    <option value="Financial Institution">Financial Institution</option>
+                    <option value="Agents">Agents</option>
+                    <option value="Energy Companies">Energy Companies</option>
+                    <option value="Infrastructure Companies">Infrastructure Companies</option>
+                    <option value="Government Agencies">Government Agencies</option>
+                    <option value="Others">Others</option>
+                  </select>
+                  <input name="designation" placeholder="Designation" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+                  <select name="registrationProcess" required onChange={handleInputChange} className="border rounded-lg p-2 w-full">
+                    <option value="">Registration Process</option>
+                    <option value="partnership/collaboration">Partnership/Collaboration</option>
+                    <option value="service provision">Service Provision</option>
+                    <option value="property listing">Property Listing</option>
+                    <option value="investment opportunities">Investment Opportunities</option>
+                  </select>
+                </>
               )}
 
-              {/* Organization Form */}
-              {type === "organization" && (
-                <div className="flex flex-col gap-4">
-                  <h2 className="text-xl font-bold text-purple-700 mb-2">
-                    Organization Registration
-                  </h2>
+              <div className="md:col-span-2">
+                <button type="submit" className="w-full py-3 bg-green-600 text-white font-semibold rounded-full hover:bg-green-500">
+                  Submit & Pay
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
-                  <div className="grid grid-cols-1 gap-3">
-                    {Object.keys(orgForm).map((key) => (
-                      <input
-                        key={key}
-                        type="text"
-                        value={orgForm[key]}
-                        onChange={(e) =>
-                          setOrgForm({
-                            ...orgForm,
-                            [key]: e.target.value,
-                          })
-                        }
-                        className="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-400 focus:outline-none transition-all"
-                        placeholder={key.replace(/([A-Z])/g, " $1")}
-                      />
-                    ))}
-                  </div>
-
-                  <motion.button
-                    onClick={handleOrgSubmit}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="mt-4 w-full bg-purple-600 text-white p-3 rounded-lg font-semibold shadow-md hover:bg-purple-700 transition-all"
-                  >
-                    Submit
-                  </motion.button>
-                </div>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+      {confetti && <Confetti width={windowSize.width} height={windowSize.height} numberOfPieces={250} recycle={false} />}
+    </section>
   );
 }
