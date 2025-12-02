@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Confetti from "react-confetti";
-import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 
 export default function ServicePage() {
   const router = useRouter();
@@ -16,10 +15,20 @@ export default function ServicePage() {
 
   useEffect(() => {
     setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+
     const handleResize = () =>
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Load FLW script automatically
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.flutterwave.com/v3.js";
+    script.async = true;
+    document.body.appendChild(script);
   }, []);
 
   const handleOptionClick = (option) => {
@@ -32,31 +41,41 @@ export default function ServicePage() {
     setForm({ ...form, [name]: files ? files[0] : value });
   };
 
-  // Flutterwave config (LANDLORD ONLY)
-  const paymentConfig = {
-    public_key: "FLWPUBK-42fdf25af2f988975742a7aed0a996c3-X",
-    tx_ref: Date.now(),
-    amount: 15500,
-    currency: "NGN",
-    customer: {
-      email: form.email || "",
-      phonenumber: form.phoneNumber || "",
-      name: form.fullName || "",
-    },
-    customizations: {
-      title: "PoleGrid Services",
-      description: "Landlord registration payment",
-      logo: "https://polegrid.com/polegrid.png",
-    },
+  // ------------ INLINE PAYMENT ------------
+  const handleLandlordPayment = () => {
+    if (!form.email || !form.fullName || !form.phoneNumber) {
+      alert("Please fill in all required fields!");
+      return;
+    }
+
+    FlutterwaveCheckout({
+      public_key: "FLWPUBK-42fdf25af2f988975742a7aed0a996c3-X",
+      tx_ref: `polegrid_${Date.now()}`,
+      amount: 15500,
+      currency: "NGN",
+      customer: {
+        email: form.email,
+        phonenumber: form.phoneNumber,
+        name: form.fullName,
+      },
+      customizations: {
+        title: "PoleGrid Services",
+        description: "Landlord registration payment",
+        logo: "https://polegrid.com/polegrid.png",
+      },
+      callback: function (response) {
+        console.log("Payment Success:", response);
+        setConfetti(true);
+        setTimeout(() => {
+          router.push("/thank-you/");
+        }, 1000);
+      },
+      onclose: function () {
+        console.log("Payment Closed");
+      },
+    });
   };
 
-  // ✔ LANDLORD PAYMENT SUCCESS → redirect
-  const handlePaymentSuccess = () => {
-    closePaymentModal();
-    router.push("/thank-you/");
-  };
-
-  // ✔ ORGANIZATION SUBMIT (NO payment)
   const handleOrganizationSubmit = () => {
     router.push("/thank-you/");
   };
@@ -78,6 +97,7 @@ export default function ServicePage() {
         >
           Landlord
         </button>
+
         <button
           onClick={() => handleOptionClick("organization")}
           className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-500"
@@ -97,9 +117,7 @@ export default function ServicePage() {
             </button>
 
             <h2 className="text-2xl font-bold text-center mb-6 text-green-600">
-              {selectedOption === "landlord"
-                ? "Landlord Details"
-                : "Organization Details"}
+              {selectedOption === "landlord" ? "Landlord Details" : "Organization Details"}
             </h2>
 
             <form className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[80vh] overflow-auto">
@@ -112,16 +130,19 @@ export default function ServicePage() {
                   <input name="state" placeholder="State" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
                   <input name="propertyAddress" placeholder="Property Address" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
                   <input name="localGovernment" placeholder="Local Government" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+
                   <select name="sex" required onChange={handleInputChange} className="border rounded-lg p-2 w-full">
                     <option value="">Select Sex</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                   </select>
+
                   <select name="serviceType" required onChange={handleInputChange} className="border rounded-lg p-2 w-full">
                     <option value="">Service Type</option>
                     <option value="Tower">Tower</option>
                     <option value="ATMinstallation">ATM Installation</option>
                   </select>
+
                   <input type="file" name="idPhoto" required onChange={handleInputChange} className="w-full" />
                   <input type="file" name="supportingDocs" required onChange={handleInputChange} className="w-full" />
                 </>
@@ -134,9 +155,13 @@ export default function ServicePage() {
                   <input type="email" name="emailAddress" placeholder="Email Address" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
                   <input type="tel" name="phoneNumber" placeholder="Phone Number" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
                   <input name="address" placeholder="Address" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+
                   <input name="contactPersonName" placeholder="Contact Person Name" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+
                   <input type="email" name="contactPersonEmail" placeholder="Contact Person Email" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+
                   <input type="tel" name="contactPersonPhone" placeholder="Contact Person Phone" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+
                   <select name="organizationType" required onChange={handleInputChange} className="border rounded-lg p-2 w-full">
                     <option value="">Organization Type</option>
                     <option value="Telecom Company">Telecom Company</option>
@@ -149,7 +174,9 @@ export default function ServicePage() {
                     <option value="Government Agencies">Government Agencies</option>
                     <option value="Others">Others</option>
                   </select>
+
                   <input name="designation" placeholder="Designation" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+
                   <select name="registrationProcess" required onChange={handleInputChange} className="border rounded-lg p-2 w-full">
                     <option value="">Registration Process</option>
                     <option value="partnership/collaboration">Partnership/Collaboration</option>
@@ -160,15 +187,16 @@ export default function ServicePage() {
                 </>
               )}
 
-              {/* SUBMIT SECTION */}
+              {/* SUBMIT */}
               <div className="md:col-span-2">
                 {selectedOption === "landlord" ? (
-                  <FlutterWaveButton
-                    {...paymentConfig}
+                  <button
+                    type="button"
+                    onClick={handleLandlordPayment}
                     className="w-full py-3 bg-green-600 text-white font-semibold rounded-full hover:bg-green-500"
-                    text="Submit & Pay ₦15,500"
-                    callback={handlePaymentSuccess}
-                  />
+                  >
+                    Submit & Pay ₦15,500
+                  </button>
                 ) : (
                   <button
                     type="button"
