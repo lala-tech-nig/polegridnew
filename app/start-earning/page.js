@@ -1,10 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Confetti from "react-confetti";
+import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 
 export default function ServicePage() {
-  const [selectedOption, setSelectedOption] = useState(null); // "landlord" | "organization"
+  const router = useRouter();
+
+  const [selectedOption, setSelectedOption] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState({});
   const [confetti, setConfetti] = useState(false);
@@ -12,7 +16,8 @@ export default function ServicePage() {
 
   useEffect(() => {
     setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    const handleResize = () =>
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -24,40 +29,48 @@ export default function ServicePage() {
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
-    if (files) {
-      setForm({ ...form, [name]: files[0] });
-    } else {
-      setForm({ ...form, [name]: value });
-    }
+    setForm({ ...form, [name]: files ? files[0] : value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setConfetti(true);
-    setTimeout(() => {
-      setConfetti(false);
-      setModalOpen(false);
-      const paymentUrl = `https://checkout.flutterwave.com/v3/hosted/pay?tx_ref=${Date.now()}&amount=5000&currency=NGN&redirect_url=${encodeURIComponent(
-        window.location.href
-      )}&customer[email]=${form.email || form.emailAddress || ""}`;
-      window.location.href = paymentUrl;
-    }, 3000);
+  // Flutterwave config (LANDLORD ONLY)
+  const paymentConfig = {
+    public_key: "FLWPUBK-42fdf25af2f988975742a7aed0a996c3-X",
+    tx_ref: Date.now(),
+    amount: 15500,
+    currency: "NGN",
+    customer: {
+      email: form.email || "",
+      phonenumber: form.phoneNumber || "",
+      name: form.fullName || "",
+    },
+    customizations: {
+      title: "PoleGrid Services",
+      description: "Landlord registration payment",
+      logo: "https://polegrid.com/polegrid.png",
+    },
+  };
+
+  // ✔ LANDLORD PAYMENT SUCCESS → redirect
+  const handlePaymentSuccess = () => {
+    closePaymentModal();
+    router.push("/thank-you/");
+  };
+
+  // ✔ ORGANIZATION SUBMIT (NO payment)
+  const handleOrganizationSubmit = () => {
+    router.push("/thank-you/");
   };
 
   return (
     <section className="min-h-screen bg-gray-50 flex flex-col items-center px-6 py-16">
-      {/* Introduction */}
       <div className="max-w-5xl text-center space-y-4">
         <h1 className="text-4xl font-bold text-green-600">Welcome to PoleGrid Services</h1>
         <p className="text-gray-700 text-lg">
-          PoleGrid offers innovative solutions for both landlords and organizations, ensuring secure, transparent, and efficient management.
+          PoleGrid offers innovative solutions for both landlords and organizations.
         </p>
-        <p className="text-gray-600">
-          Choose whether you are a Landlord or an Organization to get started with our specialized services.
-        </p>
+        <p className="text-gray-600">Choose an option below to get started.</p>
       </div>
 
-      {/* Option Buttons */}
       <div className="flex flex-col sm:flex-row gap-6 mt-10">
         <button
           onClick={() => handleOptionClick("landlord")}
@@ -73,7 +86,6 @@ export default function ServicePage() {
         </button>
       </div>
 
-      {/* Modal Form */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start sm:items-center justify-center z-50 overflow-auto p-4">
           <div className="bg-white rounded-3xl p-6 sm:p-10 w-full max-w-3xl shadow-xl relative">
@@ -85,10 +97,13 @@ export default function ServicePage() {
             </button>
 
             <h2 className="text-2xl font-bold text-center mb-6 text-green-600">
-              {selectedOption === "landlord" ? "Landlord Details" : "Organization Details"}
+              {selectedOption === "landlord"
+                ? "Landlord Details"
+                : "Organization Details"}
             </h2>
 
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[80vh] overflow-auto">
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[80vh] overflow-auto">
+              {/* LANDLORD FIELDS */}
               {selectedOption === "landlord" && (
                 <>
                   <input name="fullName" placeholder="Full Name" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
@@ -112,6 +127,7 @@ export default function ServicePage() {
                 </>
               )}
 
+              {/* ORGANIZATION FIELDS */}
               {selectedOption === "organization" && (
                 <>
                   <input name="organizationName" placeholder="Organization Name" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
@@ -144,17 +160,38 @@ export default function ServicePage() {
                 </>
               )}
 
+              {/* SUBMIT SECTION */}
               <div className="md:col-span-2">
-                <button type="submit" className="w-full py-3 bg-green-600 text-white font-semibold rounded-full hover:bg-green-500">
-                  Submit & Pay
-                </button>
+                {selectedOption === "landlord" ? (
+                  <FlutterWaveButton
+                    {...paymentConfig}
+                    className="w-full py-3 bg-green-600 text-white font-semibold rounded-full hover:bg-green-500"
+                    text="Submit & Pay ₦15,500"
+                    callback={handlePaymentSuccess}
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleOrganizationSubmit}
+                    className="w-full py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-500"
+                  >
+                    Submit Now
+                  </button>
+                )}
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {confetti && <Confetti width={windowSize.width} height={windowSize.height} numberOfPieces={250} recycle={false} />}
+      {confetti && (
+        <Confetti
+          width={windowSize.width}
+          height={windowSize.height}
+          numberOfPieces={250}
+          recycle={false}
+        />
+      )}
     </section>
   );
 }
