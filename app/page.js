@@ -10,6 +10,7 @@ import Navbar from "@/components/Navbar";
 import ServicesSection from "@/components/ServicesSection";
 import Testimonials from "@/components/Testimonials";
 import AboutSection from "@/components/AboutSection";
+import OurTeam from "@/components/OurTeam";
 
 
 export default function Home() {
@@ -31,6 +32,7 @@ export default function Home() {
           <HeroCarousel />
           <ServicesSection />
           <AboutSection />
+          <OurTeam />
           <Testimonials />
           <FAQ />
           <ContactForm />
