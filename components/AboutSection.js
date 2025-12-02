@@ -17,7 +17,7 @@ export default function AboutSection() {
 
         {/* IMAGE */}
         <div className="overflow-hidden rounded-2xl shadow-xl">
-          <img src="/hero3.jpg" alt="About PoleGrid" className="w-full h-full object-cover" />
+          <img src="/about.jpg" alt="About PoleGrid" className="w-full h-full object-cover" />
         </div>
 
         {/* CONTENT */}

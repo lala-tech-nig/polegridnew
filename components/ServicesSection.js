@@ -7,7 +7,7 @@ import Confetti from "react-confetti";
 
 const services = [
   {
-    image: "/hero1.jpg",
+    image: "./hero1.jpg",
     title: "Land Leasing for Towers",
     desc: "Secure revenue from your unused land through premium tower leasing.",
     full:
