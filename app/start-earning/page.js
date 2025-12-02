@@ -61,7 +61,7 @@ export default function ServicePage() {
       customizations: {
         title: "PoleGrid Services",
         description: "Landlord registration payment",
-        logo: "https://polegrid.com/polegrid.png",
+        logo: "https://i.postimg.cc/15jgmSHD/polegridlogo1-removebg-preview.png",
       },
       callback: function (response) {
         console.log("Payment Success:", response);
