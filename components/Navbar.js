@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [active, setActive] = useState("Home");
   const [open, setOpen] = useState(false);
 
   const links = ["Home", "Services", "About", "Testimonials", "FAQ", "Contact"];
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // Smooth scroll to section
-  const handleScroll = (section) => {
-    setActive(section);
-    setOpen(false); // Close mobile menu on click
-
+  // Scroll to section if on landing page
+  const scrollToSection = (section) => {
     if (section === "Home") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
@@ -21,6 +21,33 @@ export default function Navbar() {
       if (el) el.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const handleClick = (link) => {
+    setActive(link);
+    setOpen(false); // close mobile menu
+
+    if (pathname !== "/") {
+      // redirect to landing page with hash
+      router.push(`/#${link.toLowerCase()}`);
+    } else {
+      // already on landing page
+      scrollToSection(link);
+    }
+  };
+
+  // Handle scroll when navigating from another page via hash
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    if (hash) {
+      const el = document.getElementById(hash);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 100);
+        setActive(
+          links.find((l) => l.toLowerCase() === hash) || "Home"
+        );
+      }
+    }
+  }, []);
 
   return (
     <nav className="flex justify-between items-center px-6 md:px-12 py-3 shadow-md sticky top-0 bg-white/90 backdrop-blur z-50">
@@ -32,7 +59,7 @@ export default function Navbar() {
         {links.map((link) => (
           <li key={link}>
             <button
-              onClick={() => handleScroll(link)}
+              onClick={() => handleClick(link)}
               className="relative px-2 py-1 font-medium text-black focus:outline-none transition-colors"
             >
               {link}
@@ -59,7 +86,7 @@ export default function Navbar() {
             {links.map((link) => (
               <li key={link}>
                 <button
-                  onClick={() => handleScroll(link)}
+                  onClick={() => handleClick(link)}
                   className="relative px-4 py-2 text-lg font-medium text-gray-800 focus:outline-none transition-colors"
                 >
                   {link}
