@@ -11,6 +11,7 @@ import ServicesSection from "@/components/ServicesSection";
 import Testimonials from "@/components/Testimonials";
 import AboutSection from "@/components/AboutSection";
 import OurTeam from "@/components/OurTeam";
+import CTASection from "@/components/CTASection";
 
 
 export default function Home() {
@@ -34,6 +35,7 @@ export default function Home() {
           <AboutSection />
           <OurTeam />
           <Testimonials />
+          <CTASection />
           <FAQ />
           <ContactForm />
           {/* <Footer /> */}
