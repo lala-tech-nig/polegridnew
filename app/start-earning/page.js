@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Confetti from "react-confetti";
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBuilding, FaFileAlt, FaIdCard } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaFileAlt, FaIdCard } from "react-icons/fa";
 
 export default function ServicePage() {
   const router = useRouter();
@@ -46,6 +46,30 @@ export default function ServicePage() {
     }
   };
 
+  // Submit Landlord Form to API
+  const handleLandlordSubmit = async () => {
+    try {
+      const formData = new FormData();
+      Object.keys(form).forEach((key) => formData.append(key, form[key]));
+
+      const response = await fetch("https://backend.polegrid/api/landlord/register", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Failed to submit landlord form");
+
+      const data = await response.json();
+      console.log("Landlord submission successful:", data);
+      setConfetti(true);
+      setTimeout(() => router.push("/thank-you/"), 1000);
+    } catch (error) {
+      console.error("Error submitting landlord form:", error);
+      alert("There was an error submitting the form. Please try again.");
+    }
+  };
+
+  // Handle Payment then submit landlord form
   const handleLandlordPayment = () => {
     if (!form.fullName || !form.email || !form.phoneNumber) {
       alert("Please fill in all required fields!");
@@ -65,13 +89,13 @@ export default function ServicePage() {
       },
       callback: function (response) {
         console.log("Payment Success:", response);
-        setConfetti(true);
-        setTimeout(() => router.push("/thank-you/"), 1000);
+        handleLandlordSubmit(); // Submit the form after successful payment
       },
       onclose: function () { console.log("Payment Closed"); },
     });
   };
 
+  // Organization form submission (unchanged)
   const handleOrganizationSubmit = async () => {
     const requiredFields = [
       "organizationName", "emailAddress", "phoneNumber", "address",
@@ -89,7 +113,7 @@ export default function ServicePage() {
       const formData = new FormData();
       Object.keys(form).forEach((key) => formData.append(key, form[key]));
 
-      const response = await fetch("https://ploegriddb.onrender.com/api/organization/register", {
+      const response = await fetch("https://backend.polegrid/api/organization/register", {
         method: "POST",
         body: formData,
       });
@@ -99,7 +123,6 @@ export default function ServicePage() {
       const data = await response.json();
       console.log("Organization submission successful:", data);
       setConfetti(true);
-      // alert("Organization registration successful!");
       setTimeout(() => router.push("/thank-you/"), 1000);
     } catch (error) {
       console.error("Error submitting organization form:", error);
@@ -120,32 +143,25 @@ export default function ServicePage() {
         <button onClick={() => handleOptionClick("organization")} className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-500">Organization</button>
       </div>
 
-            {/* NOTICE SECTION BELOW BUTTONS */}
-      <div className="w-full max-w-3xl bg-white shadow-sm border border-gray-200 rounded-2xl p-6">
-        <h3 className="text-xl font-semibold text-green-700 mb-3">
-          Payment Notice (₦15,500)
-        </h3>
-
+      {/* NOTICE SECTION BELOW BUTTONS */}
+      <div className="w-full max-w-3xl bg-white shadow-sm border border-gray-200 rounded-2xl p-6 mt-6">
+        <h3 className="text-xl font-semibold text-green-700 mb-3">Payment Notice (₦15,500)</h3>
         <p className="text-gray-700 leading-relaxed">
           Clicking on Landlord button above requires you to make an online payment
           of <strong>₦15,500</strong> using your card.
         </p>
-
         <p className="text-gray-700 mt-4">
           Alternatively, you may pay by direct bank transfer to:
         </p>
-
         <div className="mt-3 bg-green-50 border border-green-200 p-4 rounded-lg text-sm">
           <p><strong>Bank:</strong> UBA</p>
           <p><strong>Account Name:</strong> Polegrid Solutions</p>
           <p><strong>Account Number:</strong> 1028078590</p>
         </div>
-
         <p className="text-gray-700 mt-4 text-sm">
           After making a transfer, send your payment receipt to our official WhatsApp:
-          <strong> 0701 816 2166</strong>.  
+          <strong> 0701 816 2166</strong>.
         </p>
-
         <p className="text-gray-700 mt-2 text-sm">
           Once verified, we will send you the registration form directly on WhatsApp.
         </p>
@@ -158,7 +174,7 @@ export default function ServicePage() {
           <div className="bg-white rounded-3xl p-6 sm:p-10 w-full max-w-3xl shadow-xl relative">
             <button onClick={() => setModalOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 font-bold text-xl">✕</button>
             <h2 className="text-2xl font-bold text-center mb-6 text-green-600">
-              {selectedOption === "landlord" ? "Land Fast Track Registration (Polegrid)" : "Organization Registration Form (Polegrid)"}
+              {selectedOption === "landlord" ? "Land Fast Track Registration" : "Organization Registration Form"}
             </h2>
 
             <form className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[80vh] overflow-auto">
@@ -225,7 +241,7 @@ export default function ServicePage() {
                     <option value="Government Agency">Government Agency</option>
                     <option value="Others">Others</option>
                   </select>
-                  <input name="otherOrganizationType" placeholder='If "Others," specify' onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
+        
                   <input name="contactPersonName" placeholder="Contact Person Name" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
                   <input name="designation" placeholder="Contact Person Designation/Title" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
                   <input type="email" name="contactPersonEmail" placeholder="Contact Person Email" required onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
@@ -238,7 +254,6 @@ export default function ServicePage() {
                     <option value="Investment Interest">Investment Interest</option>
                     <option value="Other">Other</option>
                   </select>
-                  <input name="otherPurpose" placeholder='If "Other," specify purpose' onChange={handleInputChange} className="border rounded-lg p-2 w-full" />
                 </>
               )}
 

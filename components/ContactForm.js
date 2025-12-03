@@ -2,18 +2,16 @@
 
 import { useState, useRef } from "react";
 import Confetti from "react-confetti";
-import {
-  FiUser,
-  FiMail,
-  FiMessageSquare,
-  FiMapPin,
-  FiPhone,
-  FiSend,
-} from "react-icons/fi";
+import { FiUser, FiMail, FiMessageSquare, FiMapPin, FiPhone, FiSend } from "react-icons/fi";
 import { motion } from "framer-motion";
 
 export default function ContactForm() {
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -21,22 +19,32 @@ export default function ContactForm() {
 
   const formRef = useRef();
 
+  // SIMPLE, CLEAN HANDLER
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const res = await fetch("https://backend.polegrid.com/api/contact", {
+      const res = await fetch("https://backend.polegrid.com/api/contact/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) throw new Error("Failed to send message.");
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to send message.");
+      }
 
       setSubmitted(true);
       setConfetti(true);
+
       setForm({ name: "", email: "", message: "" });
 
       setTimeout(() => setConfetti(false), 5000);
@@ -50,14 +58,14 @@ export default function ContactForm() {
 
   return (
     <section className="py-24 bg-gradient-to-b from-gray-50 to-gray-200 relative overflow-hidden">
-
-      {/* Subtle background circles */}
+      
+      {/* Background circles */}
       <div className="absolute top-10 left-10 w-72 h-72 bg-green-200 rounded-full opacity-20 blur-3xl" />
       <div className="absolute bottom-10 right-10 w-72 h-72 bg-blue-200 rounded-full opacity-20 blur-3xl" />
 
       <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-14 relative">
 
-        {/* Left Image Card */}
+        {/* Left Image */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
@@ -65,17 +73,11 @@ export default function ContactForm() {
           whileHover={{ scale: 1.01 }}
           className="rounded-3xl shadow-2xl overflow-hidden bg-white/60 backdrop-blur-lg border border-white/40"
         >
-          <img
-            src="/customer.jpg"
-            alt="Contact Us"
-            className="object-cover w-full h-full"
-          />
+          <img src="/customer.jpg" alt="Contact Us" className="object-cover w-full h-full" />
         </motion.div>
 
-        {/* Right Side Content */}
+        {/* FORM SECTION */}
         <div className="space-y-10">
-
-          {/* Form */}
           <motion.form
             ref={formRef}
             onSubmit={handleSubmit}
@@ -84,78 +86,71 @@ export default function ContactForm() {
             transition={{ duration: 1 }}
             className="p-8 rounded-3xl bg-white/70 backdrop-blur-xl shadow-xl border border-white/40 space-y-6 relative"
           >
-            <h2 className="text-4xl font-extrabold text-gray-800">
-              Let's Talk
-            </h2>
-
-            <p className="text-gray-600 leading-relaxed">
+            <h2 className="text-4xl font-extrabold text-gray-800">Let's Talk</h2>
+            <p className="text-gray-600">
               We’d love to hear from you. Fill the form and our support team will reply shortly.
             </p>
 
-            {/* Input group (cleaner, minimal, modern) */}
-            {[
-              {
-                icon: <FiUser />,
-                placeholder: "Your Name",
-                type: "text",
-                key: "name",
-              },
-              {
-                icon: <FiMail />,
-                placeholder: "Your Email",
-                type: "email",
-                key: "email",
-              },
-            ].map((item) => (
-              <div key={item.key} className="relative group">
-                <div className="absolute left-4 top-3 text-green-600 text-xl opacity-70 group-hover:opacity-100 transition">
-                  {item.icon}
-                </div>
-                <input
-                  type={item.type}
-                  placeholder={item.placeholder}
-                  required
-                  value={form[item.key]}
-                  onChange={(e) =>
-                    setForm({ ...form, [item.key]: e.target.value })
-                  }
-                  className="w-full bg-white/50 border border-gray-300 rounded-xl p-3 pl-12 
-                  focus:outline-none focus:ring-2 focus:ring-green-500 transition text-gray-700"
-                />
-              </div>
-            ))}
-
-            {/* Textarea */}
-            <div className="relative group">
-              <FiMessageSquare className="absolute left-4 top-3 text-green-600 text-xl opacity-70 group-hover:opacity-100 transition" />
-              <textarea
-                placeholder="Write your message..."
+            {/* NAME */}
+            <div className="relative">
+              <FiUser className="absolute left-4 top-3 text-green-600 text-xl opacity-70" />
+              <input
+                name="name"
+                type="text"
+                placeholder="Your Name"
+                value={form.name}
+                onChange={handleChange}
                 required
-                value={form.message}
-                onChange={(e) =>
-                  setForm({ ...form, message: e.target.value })
-                }
-                className="w-full bg-white/50 border border-gray-300 rounded-xl p-3 pl-12 h-40 
-                focus:outline-none focus:ring-2 focus:ring-green-500 transition resize-none text-gray-700"
+                className="w-full bg-white/50 border border-gray-300 rounded-xl p-3 pl-12 
+                  focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-700"
               />
             </div>
 
-            {/* Submit */}
+            {/* EMAIL */}
+            <div className="relative">
+              <FiMail className="absolute left-4 top-3 text-green-600 text-xl opacity-70" />
+              <input
+                name="email"
+                type="email"
+                placeholder="Your Email"
+                value={form.email}
+                onChange={handleChange}
+                required
+                className="w-full bg-white/50 border border-gray-300 rounded-xl p-3 pl-12 
+                  focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-700"
+              />
+            </div>
+
+            {/* MESSAGE */}
+            <div className="relative">
+              <FiMessageSquare className="absolute left-4 top-3 text-green-600 text-xl opacity-70" />
+              <textarea
+                name="message"
+                placeholder="Write your message..."
+                value={form.message}
+                onChange={handleChange}
+                required
+                className="w-full bg-white/50 border border-gray-300 rounded-xl p-3 pl-12 h-40 
+                  focus:outline-none focus:ring-2 focus:ring-green-500 resize-none text-gray-700"
+              />
+            </div>
+
+            {/* SUBMIT */}
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-4 rounded-xl flex items-center justify-center gap-2 text-white text-lg font-semibold
-              transition ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-green-600 to-blue-600 hover:opacity-90 shadow-lg"
-              }`}
+              className={`w-full py-4 rounded-xl flex items-center justify-center gap-2 text-white text-lg font-semibold 
+                transition ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-green-600 to-blue-600 hover:opacity-90 shadow-lg"
+                }`}
             >
               <FiSend className="text-xl" />
               {loading ? "Sending..." : "Send Message"}
             </button>
 
-            {/* Success */}
+            {/* SUCCESS */}
             {submitted && (
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -166,7 +161,7 @@ export default function ContactForm() {
               </motion.div>
             )}
 
-            {/* Error */}
+            {/* ERROR */}
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -177,47 +172,35 @@ export default function ContactForm() {
               </motion.div>
             )}
 
-            {/* Confetti */}
             {confetti && (
-              <Confetti
-                width={window.innerWidth}
-                height={window.innerHeight}
-                numberOfPieces={200}
-                recycle={false}
-              />
+              <Confetti width={window.innerWidth} height={window.innerHeight} numberOfPieces={200} recycle={false} />
             )}
           </motion.form>
 
-          {/* Contact Info Card */}
+          {/* CONTACT INFO CARD */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl p-8 border border-white/40 space-y-5"
           >
             <h3 className="text-2xl font-bold text-gray-800">Contact Details</h3>
-
-            <p className="text-gray-600">
-              Reach out to us anytime. We're ready to assist you.
-            </p>
+            <p className="text-gray-600">Reach out to us anytime. We're ready to assist you.</p>
 
             <div className="space-y-4">
               <div className="flex gap-3 items-start text-gray-700">
                 <FiMapPin className="text-green-600 text-xl" />
                 4a Ajimoh Logere, Pinnacle Horizon, Ibeju-Lekki, Lagos.
               </div>
-
               <div className="flex gap-3 items-start text-gray-700">
                 <FiMail className="text-green-600 text-xl" />
                 polegrid01@gmail.com
               </div>
-
               <div className="flex gap-3 items-start text-gray-700">
                 <FiPhone className="text-green-600 text-xl" />
                 07018162166
               </div>
             </div>
           </motion.div>
-
         </div>
       </div>
     </section>
