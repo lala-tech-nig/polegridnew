@@ -83,7 +83,7 @@ export default function ServicePage() {
       currency: "NGN",
       customer: { email: form.email, phonenumber: form.phoneNumber, name: form.fullName },
       customizations: {
-        title: "PoleGrid Services",
+        title: "PoleGrid Solutions",
         description: "Landlord registration payment",
         logo: "https://i.postimg.cc/15jgmSHD/polegridlogo1-removebg-preview.png",
       },
