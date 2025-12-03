@@ -115,16 +115,43 @@ export default function ServicePage() {
         <p className="text-gray-600">Choose an option below to get started.</p>
       </div>
 
-      <div>
-        <h1>
-          
-        </h1>
-      </div>
-
       <div className="flex flex-col sm:flex-row gap-6 mt-10">
         <button onClick={() => handleOptionClick("landlord")} className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-500">Landlord</button>
         <button onClick={() => handleOptionClick("organization")} className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-500">Organization</button>
       </div>
+
+            {/* NOTICE SECTION BELOW BUTTONS */}
+      <div className="w-full max-w-3xl bg-white shadow-sm border border-gray-200 rounded-2xl p-6">
+        <h3 className="text-xl font-semibold text-green-700 mb-3">
+          Payment Notice (₦15,500)
+        </h3>
+
+        <p className="text-gray-700 leading-relaxed">
+          Clicking on Landlord button above requires you to make an online payment
+          of <strong>₦15,500</strong> using your card.
+        </p>
+
+        <p className="text-gray-700 mt-4">
+          Alternatively, you may pay by direct bank transfer to:
+        </p>
+
+        <div className="mt-3 bg-green-50 border border-green-200 p-4 rounded-lg text-sm">
+          <p><strong>Bank:</strong> UBA</p>
+          <p><strong>Account Name:</strong> Polegrid Solutions</p>
+          <p><strong>Account Number:</strong> 1028078590</p>
+        </div>
+
+        <p className="text-gray-700 mt-4 text-sm">
+          After making a transfer, send your payment receipt to our official WhatsApp:
+          <strong> 0701 816 2166</strong>.  
+        </p>
+
+        <p className="text-gray-700 mt-2 text-sm">
+          Once verified, we will send you the registration form directly on WhatsApp.
+        </p>
+      </div>
+
+      <hr className="my-10 w-full max-w-3xl border-gray-300" />
 
       {modalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start sm:items-center justify-center z-50 overflow-auto p-4">
