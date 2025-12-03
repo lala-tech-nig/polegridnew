@@ -115,6 +115,12 @@ export default function ServicePage() {
         <p className="text-gray-600">Choose an option below to get started.</p>
       </div>
 
+      <div>
+        <h1>
+          
+        </h1>
+      </div>
+
       <div className="flex flex-col sm:flex-row gap-6 mt-10">
         <button onClick={() => handleOptionClick("landlord")} className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-500">Landlord</button>
         <button onClick={() => handleOptionClick("organization")} className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-500">Organization</button>

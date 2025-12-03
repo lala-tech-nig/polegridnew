@@ -5,7 +5,7 @@ import { QuestionMarkCircleIcon, PlusIcon, MinusIcon } from "@heroicons/react/24
 
 export default function FAQ() {
   const faqData = [
-    { question: "What is Polegrid?", answer: "Polegrid connects landowners with telecom companies and banks looking to install masts or ATMs, securing passive income for property owners." },
+    { question: "What is Polegrid?", answer: "Polegrid Solutions is a company specializing in streamlining and fast-tracking the site acquisition process for Telecom Operators and Tower Companies for the installation of telecom towers nationwide. Essentially, Polegrid acts as the crucial link between landowners and the telecommunications industry in Nigeria." },
     { question: "How does it work?", answer: "We match telecom needs with landowners' properties, handle verification, documentation, and lease agreements." },
     { question: "What documents are required?", answer: "ID, land ownership proof, utility bill, passport photo, and a photo of your land." },
     { question: "How much can I earn?", answer: "Earnings vary by location and tower size, typically above ₦2 million yearly." },

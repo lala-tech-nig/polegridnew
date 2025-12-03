@@ -2,127 +2,223 @@
 
 import { useState, useRef } from "react";
 import Confetti from "react-confetti";
-import { FiUser, FiMail, FiMessageSquare } from "react-icons/fi";
+import {
+  FiUser,
+  FiMail,
+  FiMessageSquare,
+  FiMapPin,
+  FiPhone,
+  FiSend,
+} from "react-icons/fi";
 import { motion } from "framer-motion";
 
 export default function ContactForm() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [confetti, setConfetti] = useState(false);
+
   const formRef = useRef();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setConfetti(true);
-    setForm({ name: "", email: "", message: "" });
+    setLoading(true);
+    setError(null);
 
-    setTimeout(() => setConfetti(false), 5000);
-    setTimeout(() => setSubmitted(false), 4000);
+    try {
+      const res = await fetch("https://backend.polegrid.com/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) throw new Error("Failed to send message.");
+
+      setSubmitted(true);
+      setConfetti(true);
+      setForm({ name: "", email: "", message: "" });
+
+      setTimeout(() => setConfetti(false), 5000);
+      setTimeout(() => setSubmitted(false), 4000);
+    } catch (err) {
+      setError(err.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="max-w-5xl mx-auto px-6 flex flex-col lg:flex-row items-stretch gap-8">
-        {/* Left Image with Gradient Border and Hover Animation */}
+    <section className="py-24 bg-gradient-to-b from-gray-50 to-gray-200 relative overflow-hidden">
+
+      {/* Subtle background circles */}
+      <div className="absolute top-10 left-10 w-72 h-72 bg-green-200 rounded-full opacity-20 blur-3xl" />
+      <div className="absolute bottom-10 right-10 w-72 h-72 bg-blue-200 rounded-full opacity-20 blur-3xl" />
+
+      <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-14 relative">
+
+        {/* Left Image Card */}
         <motion.div
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1 }}
-          whileHover={{ y: -10, scale: 1.02 }}
-          className="w-full lg:w-1/2 max-h-[500px] p-1 rounded-3xl bg-gradient-to-r from-green-400 via-green-600 to-blue-500 shadow-xl flex items-center justify-center"
+          whileHover={{ scale: 1.01 }}
+          className="rounded-3xl shadow-2xl overflow-hidden bg-white/60 backdrop-blur-lg border border-white/40"
         >
-          <div className="overflow-hidden rounded-2xl h-full w-full shadow-lg">
-            <img
-              src="/customer.jpg" // replace with your image
-              alt="Contact Us"
-              className="object-cover w-full h-full"
-            />
-          </div>
+          <img
+            src="/customer.jpg"
+            alt="Contact Us"
+            className="object-cover w-full h-full"
+          />
         </motion.div>
 
-        {/* Right Form */}
-        <motion.form
-          ref={formRef}
-          onSubmit={handleSubmit}
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1 }}
-          className="w-full lg:w-1/2 max-h-[500px] bg-white p-6 lg:p-8 rounded-2xl shadow-xl space-y-4 lg:space-y-6 relative flex flex-col justify-center"
-        >
-          <h2 className="text-3xl font-bold text-green-600 mb-4 lg:mb-6 text-center lg:text-left">
-            Contact Us
-          </h2>
+        {/* Right Side Content */}
+        <div className="space-y-10">
 
-          {/* Name */}
-          <div className="relative">
-            <FiUser className="absolute left-3 top-3 text-green-600" />
-            <input
-              type="text"
-              placeholder="Your Name"
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            />
-          </div>
-
-          {/* Email */}
-          <div className="relative">
-            <FiMail className="absolute left-3 top-3 text-green-600" />
-            <input
-              type="email"
-              placeholder="Your Email"
-              required
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            />
-          </div>
-
-          {/* Message */}
-          <div className="relative">
-            <FiMessageSquare className="absolute left-3 top-3 text-green-600" />
-            <textarea
-              placeholder="Message"
-              required
-              value={form.message}
-              onChange={(e) =>
-                setForm({ ...form, message: e.target.value })
-              }
-              className="w-full border border-gray-300 rounded-lg p-3 pl-10 h-48 resize-none focus:outline-none focus:ring-2 focus:ring-green-500 transition"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-3 bg-green-600 text-white font-semibold rounded-full hover:opacity-90 transition"
+          {/* Form */}
+          <motion.form
+            ref={formRef}
+            onSubmit={handleSubmit}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1 }}
+            className="p-8 rounded-3xl bg-white/70 backdrop-blur-xl shadow-xl border border-white/40 space-y-6 relative"
           >
-            Send Message
-          </button>
+            <h2 className="text-4xl font-extrabold text-gray-800">
+              Let's Talk
+            </h2>
 
-          {/* Toast Notification */}
-          {submitted && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="absolute top-0 right-0 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg"
+            <p className="text-gray-600 leading-relaxed">
+              We’d love to hear from you. Fill the form and our support team will reply shortly.
+            </p>
+
+            {/* Input group (cleaner, minimal, modern) */}
+            {[
+              {
+                icon: <FiUser />,
+                placeholder: "Your Name",
+                type: "text",
+                key: "name",
+              },
+              {
+                icon: <FiMail />,
+                placeholder: "Your Email",
+                type: "email",
+                key: "email",
+              },
+            ].map((item) => (
+              <div key={item.key} className="relative group">
+                <div className="absolute left-4 top-3 text-green-600 text-xl opacity-70 group-hover:opacity-100 transition">
+                  {item.icon}
+                </div>
+                <input
+                  type={item.type}
+                  placeholder={item.placeholder}
+                  required
+                  value={form[item.key]}
+                  onChange={(e) =>
+                    setForm({ ...form, [item.key]: e.target.value })
+                  }
+                  className="w-full bg-white/50 border border-gray-300 rounded-xl p-3 pl-12 
+                  focus:outline-none focus:ring-2 focus:ring-green-500 transition text-gray-700"
+                />
+              </div>
+            ))}
+
+            {/* Textarea */}
+            <div className="relative group">
+              <FiMessageSquare className="absolute left-4 top-3 text-green-600 text-xl opacity-70 group-hover:opacity-100 transition" />
+              <textarea
+                placeholder="Write your message..."
+                required
+                value={form.message}
+                onChange={(e) =>
+                  setForm({ ...form, message: e.target.value })
+                }
+                className="w-full bg-white/50 border border-gray-300 rounded-xl p-3 pl-12 h-40 
+                focus:outline-none focus:ring-2 focus:ring-green-500 transition resize-none text-gray-700"
+              />
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-4 rounded-xl flex items-center justify-center gap-2 text-white text-lg font-semibold
+              transition ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-r from-green-600 to-blue-600 hover:opacity-90 shadow-lg"
+              }`}
             >
-              Thank you! We'll reach out soon.
-            </motion.div>
-          )}
+              <FiSend className="text-xl" />
+              {loading ? "Sending..." : "Send Message"}
+            </button>
 
-          {/* Confetti */}
-          {confetti && (
-            <Confetti
-              width={window.innerWidth}
-              height={window.innerHeight}
-              numberOfPieces={150}
-              recycle={false}
-            />
-          )}
-        </motion.form>
+            {/* Success */}
+            {submitted && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute top-0 right-0 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg"
+              >
+                Message sent! 🎉
+              </motion.div>
+            )}
+
+            {/* Error */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute top-0 right-0 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg"
+              >
+                {error}
+              </motion.div>
+            )}
+
+            {/* Confetti */}
+            {confetti && (
+              <Confetti
+                width={window.innerWidth}
+                height={window.innerHeight}
+                numberOfPieces={200}
+                recycle={false}
+              />
+            )}
+          </motion.form>
+
+          {/* Contact Info Card */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl p-8 border border-white/40 space-y-5"
+          >
+            <h3 className="text-2xl font-bold text-gray-800">Contact Details</h3>
+
+            <p className="text-gray-600">
+              Reach out to us anytime. We're ready to assist you.
+            </p>
+
+            <div className="space-y-4">
+              <div className="flex gap-3 items-start text-gray-700">
+                <FiMapPin className="text-green-600 text-xl" />
+                4a Ajimoh Logere, Pinnacle Horizon, Ibeju-Lekki, Lagos.
+              </div>
+
+              <div className="flex gap-3 items-start text-gray-700">
+                <FiMail className="text-green-600 text-xl" />
+                polegrid01@gmail.com
+              </div>
+
+              <div className="flex gap-3 items-start text-gray-700">
+                <FiPhone className="text-green-600 text-xl" />
+                07018162166
+              </div>
+            </div>
+          </motion.div>
+
+        </div>
       </div>
     </section>
   );
