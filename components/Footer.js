@@ -66,7 +66,7 @@ export default function Footer() {
           </div>
 
           <p>© 2025 PoleGrid. All Rights Reserved.</p>
-          <p>Designed by <span className="text-green-500">Durafford</span></p>
+          {/* <p>Designed by <span className="text-green-500">Durafford</span></p> */}
         </div>
       </motion.footer>
 
