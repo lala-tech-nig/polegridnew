@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Confetti from "react-confetti";
 import { FiUser, FiMail, FiMessageSquare, FiMapPin, FiPhone, FiSend } from "react-icons/fi";
 import { motion } from "framer-motion";
@@ -16,10 +16,22 @@ export default function ContactForm() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [confetti, setConfetti] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
   const formRef = useRef();
 
-  // SIMPLE, CLEAN HANDLER
+  // Update window size for Confetti safely (supports SSR)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const updateSize = () =>
+        setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+
+      updateSize();
+      window.addEventListener("resize", updateSize);
+      return () => window.removeEventListener("resize", updateSize);
+    }
+  }, []);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -38,9 +50,7 @@ export default function ContactForm() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to send message.");
-      }
+      if (!res.ok) throw new Error(data.message || "Failed to send message.");
 
       setSubmitted(true);
       setConfetti(true);
@@ -57,8 +67,8 @@ export default function ContactForm() {
   };
 
   return (
-    <section className="py-24 bg-gradient-to-b from-gray-50 to-gray-200 relative overflow-hidden">
-      
+    <section id="contact" className="py-24 bg-gradient-to-b from-gray-50 to-gray-200 relative overflow-hidden">
+
       {/* Background circles */}
       <div className="absolute top-10 left-10 w-72 h-72 bg-green-200 rounded-full opacity-20 blur-3xl" />
       <div className="absolute bottom-10 right-10 w-72 h-72 bg-blue-200 rounded-full opacity-20 blur-3xl" />
@@ -87,9 +97,7 @@ export default function ContactForm() {
             className="p-8 rounded-3xl bg-white/70 backdrop-blur-xl shadow-xl border border-white/40 space-y-6 relative"
           >
             <h2 className="text-4xl font-extrabold text-gray-800">Let's Talk</h2>
-            <p className="text-gray-600">
-              We’d love to hear from you. Fill the form and our support team will reply shortly.
-            </p>
+            <p className="text-gray-600">We’d love to hear from you. Fill the form and our team will reply shortly.</p>
 
             {/* NAME */}
             <div className="relative">
@@ -102,7 +110,7 @@ export default function ContactForm() {
                 onChange={handleChange}
                 required
                 className="w-full bg-white/50 border border-gray-300 rounded-xl p-3 pl-12 
-                  focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-700"
+                focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-700"
               />
             </div>
 
@@ -117,7 +125,7 @@ export default function ContactForm() {
                 onChange={handleChange}
                 required
                 className="w-full bg-white/50 border border-gray-300 rounded-xl p-3 pl-12 
-                  focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-700"
+                focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-700"
               />
             </div>
 
@@ -131,7 +139,7 @@ export default function ContactForm() {
                 onChange={handleChange}
                 required
                 className="w-full bg-white/50 border border-gray-300 rounded-xl p-3 pl-12 h-40 
-                  focus:outline-none focus:ring-2 focus:ring-green-500 resize-none text-gray-700"
+                focus:outline-none focus:ring-2 focus:ring-green-500 resize-none text-gray-700"
               />
             </div>
 
@@ -157,7 +165,7 @@ export default function ContactForm() {
                 animate={{ opacity: 1, y: 0 }}
                 className="absolute top-0 right-0 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg"
               >
-                Message sent! 🎉
+                Message sent!
               </motion.div>
             )}
 
@@ -173,7 +181,12 @@ export default function ContactForm() {
             )}
 
             {confetti && (
-              <Confetti width={window.innerWidth} height={window.innerHeight} numberOfPieces={200} recycle={false} />
+              <Confetti
+                width={windowSize.width}
+                height={windowSize.height}
+                numberOfPieces={200}
+                recycle={false}
+              />
             )}
           </motion.form>
 
@@ -186,16 +199,18 @@ export default function ContactForm() {
             <h3 className="text-2xl font-bold text-gray-800">Contact Details</h3>
             <p className="text-gray-600">Reach out to us anytime. We're ready to assist you.</p>
 
-            <div className="space-y-4">
-              <div className="flex gap-3 items-start text-gray-700">
+            <div className="space-y-4 text-gray-700">
+              <div className="flex gap-3 items-start">
                 <FiMapPin className="text-green-600 text-xl" />
-                4a Ajimoh Logere, Pinnacle Horizon, Ibeju-Lekki, Lagos.
+                4A Ajimo Logere, Pinnacle Horizon, Ibeju-Lekki, Lagos.
               </div>
-              <div className="flex gap-3 items-start text-gray-700">
+
+              <div className="flex gap-3 items-start">
                 <FiMail className="text-green-600 text-xl" />
                 polegrid01@gmail.com
               </div>
-              <div className="flex gap-3 items-start text-gray-700">
+
+              <div className="flex gap-3 items-start">
                 <FiPhone className="text-green-600 text-xl" />
                 07018162166
               </div>

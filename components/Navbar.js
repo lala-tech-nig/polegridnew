@@ -12,36 +12,46 @@ export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Scroll to section if on landing page
+  // Scroll to section
   const scrollToSection = (section) => {
+    const id = section.toLowerCase();
+
     if (section === "Home") {
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      const el = document.getElementById(section.toLowerCase());
-      if (el) el.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   const handleClick = (link) => {
     setActive(link);
-    setOpen(false); // close mobile menu
+    setOpen(false);
+
+    const target = link.toLowerCase();
 
     if (pathname !== "/") {
-      // redirect to landing page with hash
-      router.push(`/#${link.toLowerCase()}`);
+      // Ensure navigation goes to home + hash anchor
+      router.push(`/#${target}`);
     } else {
-      // already on landing page
       scrollToSection(link);
     }
   };
 
-  // Handle scroll when navigating from another page via hash
+  // Scroll when landing via hash
   useEffect(() => {
     const hash = window.location.hash.replace("#", "");
+
     if (hash) {
       const el = document.getElementById(hash);
       if (el) {
-        setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 100);
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth" });
+        }, 150);
+
         setActive(
           links.find((l) => l.toLowerCase() === hash) || "Home"
         );
@@ -51,10 +61,9 @@ export default function Navbar() {
 
   return (
     <nav className="flex justify-between items-center px-6 md:px-12 py-3 shadow-md sticky top-0 bg-white/90 backdrop-blur z-50">
-      {/* Logo */}
       <img src="polegrid.png" alt="PoleGrid" className="w-20 md:w-24" />
 
-      {/* Desktop Links */}
+      {/* Desktop Menu */}
       <ul className="hidden md:flex gap-6 items-center">
         {links.map((link) => (
           <li key={link}>
@@ -103,12 +112,8 @@ export default function Navbar() {
       {/* Animations */}
       <style jsx>{`
         @keyframes underline-slide {
-          0% {
-            transform: scaleX(0);
-          }
-          100% {
-            transform: scaleX(1);
-          }
+          0% { transform: scaleX(0); }
+          100% { transform: scaleX(1); }
         }
         .animate-underline {
           transform-origin: left;
@@ -116,14 +121,8 @@ export default function Navbar() {
         }
 
         @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         .animate-slideDown {
           animation: slideDown 0.3s ease forwards;
