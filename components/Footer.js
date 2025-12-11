@@ -31,12 +31,12 @@ export default function Footer() {
               <motion.a whileHover={{ scale: 1.2 }} href="https://facebook.com/people/Polegrid-Solutions/61577642467184" className="text-gray-300 hover:text-green-500">
                 <FaFacebookF size={20} />
               </motion.a>
-              <motion.a whileHover={{ scale: 1.2 }} href="#" className="text-gray-300 hover:text-green-500">
+              {/* <motion.a whileHover={{ scale: 1.2 }} href="#" className="text-gray-300 hover:text-green-500">
                 <FaTwitter size={20} />
               </motion.a>
               <motion.a whileHover={{ scale: 1.2 }} href="#" className="text-gray-300 hover:text-green-500">
                 <FaLinkedinIn size={20} />
-              </motion.a>
+              </motion.a> */}
               <motion.a whileHover={{ scale: 1.2 }} href="https://www.instagram.com/_polegrid/?__pwa=1#" className="text-gray-300 hover:text-green-500">
                 <FaInstagram size={20} />
               </motion.a>
